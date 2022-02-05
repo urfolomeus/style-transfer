@@ -20,6 +20,8 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-
 
 COPY . .
 
+RUN chmod +x download_models.sh && source download_models.sh
+
 EXPOSE 8080
 
 ENV PATH "$PATH:/etc/poetry/bin"
