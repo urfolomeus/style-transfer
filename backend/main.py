@@ -1,18 +1,16 @@
-import uuid
-
-import cv2
-import uvicorn
-from fastapi import File, FastAPI, UploadFile
-import numpy as np
-from PIL import Image
-
-import config
-import inference
-
 import asyncio
-from concurrent.futures import ProcessPoolExecutor
-from functools import partial
+import config
+import cv2
+import inference
+import numpy as np
 import time
+import uuid
+import uvicorn
+
+from concurrent.futures import ProcessPoolExecutor
+from fastapi import File, FastAPI, UploadFile
+from functools import partial
+from PIL import Image
 
 
 async def generate_remaining_models(models, image, name: str):
@@ -30,6 +28,7 @@ def process_image(models, image, name: str):
         name = f"{name.split('_')[0]}_{models[model]}.jpg"
         cv2.imwrite(name, output)
 
+
 app = FastAPI()
 
 
@@ -40,16 +39,23 @@ def read_root():
 
 @app.post("/{style}")
 async def get_image(style: str, file: UploadFile = File(...)):
+    models = config.STYLES.copy()
+
+    # call the model
+    model = models[style]
     image = np.array(Image.open(file.file))
-    model = config.STYLES[style]
-    start = time.time()
     output, _ = inference.inference(model, image)
+    
+    # write the resulting image to a file
     name = f"/storage/{str(uuid.uuid4())}.jpg"
     cv2.imwrite(name, output)
-    models = config.STYLES.copy()
+    
+    # remove the style that we've done from the list and async do the rest
     del models[style]
     asyncio.create_task(generate_remaining_models(models, image, name))
-    return {"name": name, "time": time.time() - start}
+    
+    # return the file name
+    return {"name": name}
 
 
 if __name__ == "__main__":
