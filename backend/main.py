@@ -2,9 +2,8 @@ import asyncio
 import config
 import cv2
 import inference
+import model_runner
 import numpy as np
-import time
-import uuid
 import uvicorn
 
 from concurrent.futures import ProcessPoolExecutor
@@ -44,11 +43,7 @@ async def get_image(style: str, file: UploadFile = File(...)):
     # call the model
     model = models[style]
     image = np.array(Image.open(file.file))
-    output, _ = inference.inference(model, image)
-    
-    # write the resulting image to a file
-    name = f"/storage/{str(uuid.uuid4())}.jpg"
-    cv2.imwrite(name, output)
+    name = model_runner.run(model, image)
     
     # remove the style that we've done from the list and async do the rest
     del models[style]
