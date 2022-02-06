@@ -16,21 +16,18 @@ def run(model, image, base_path):
     return path
 
 
-def run_async(models, image, path: str):
-    asyncio.create_task(generate_remaining_models(models, image, path))
+def run_async(models, image, base_path: str):
+    asyncio.create_task(generate_remaining_models(models, image, base_path))
 
 
-async def generate_remaining_models(models, image, path: str):
+async def generate_remaining_models(models, image, base_path: str):
     executor = ProcessPoolExecutor()
     event_loop = asyncio.get_event_loop()
     await event_loop.run_in_executor(
-        executor, partial(process_image, models, image, path)
+        executor, partial(process_image, models, image, base_path)
     )
 
 
-def process_image(models, image, path: str):
-    for model in models:
-        output, _ = inference.inference(models[model], image)
-        path = path.split(".")[0]
-        path = f"{path.split('_')[0]}_{models[model]}.jpg"
-        cv2.imwrite(path, output)
+def process_image(models, image, base_path: str):
+    for model in models.values():
+        run(model, image, base_path)

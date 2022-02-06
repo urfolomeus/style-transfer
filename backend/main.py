@@ -29,7 +29,7 @@ async def get_image(style: str, file: UploadFile = File(...)):
     
     # remove the style that we've done from the list and async do the rest
     del models[style]
-    model_runner.run_async(models, image, path)
+    model_runner.run_async(models, image, base_path)
     
     # return the file path
     return {"path": path}
