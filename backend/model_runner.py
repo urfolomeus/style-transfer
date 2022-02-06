@@ -6,7 +6,7 @@ from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 
 
-def run(model, image, base_path):
+def run(model, image, base_path: str):
     output, _ = inference.inference(model, image)
     
     # write the resulting image to a file
