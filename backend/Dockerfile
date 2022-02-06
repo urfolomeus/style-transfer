@@ -13,14 +13,15 @@ ARG POETRY_VERSION=1.1.12
 
 WORKDIR /app
 
+COPY download_models.sh .
+RUN chmod +x download_models.sh && source download_models.sh
+
 COPY pyproject.toml poetry.lock poetry.toml ./
 
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python3 && \
   /etc/poetry/bin/poetry install
 
 COPY . .
-
-RUN chmod +x download_models.sh && source download_models.sh
 
 EXPOSE 8080
 
