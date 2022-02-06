@@ -22,14 +22,14 @@ async def get_image(style: str, file: UploadFile = File(...)):
     # call the model
     model = models[style]
     image = np.array(Image.open(file.file))
-    name = model_runner.run(model, image)
+    path = model_runner.run(model, image)
     
     # remove the style that we've done from the list and async do the rest
     del models[style]
-    model_runner.run_async(models, image, name)
+    model_runner.run_async(models, image, path)
     
-    # return the file name
-    return {"name": name}
+    # return the file path
+    return {"path": path}
 
 
 if __name__ == "__main__":

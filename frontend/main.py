@@ -37,7 +37,7 @@ if st.button("Style Transfer"):
         
         # use the response to get the first transformed image
         img_path = res.json()
-        image = Image.open(img_path.get("name"))
+        image = Image.open(img_path.get("path"))
         st.image(image, width=500)
 
         # record the style that we've got so far
@@ -53,7 +53,7 @@ if st.button("Style Transfer"):
                 if style not in displayed_styles:
                     try:
                         # get the image
-                        path = f"{img_path.get('name').split('.')[0]}_{STYLES[style]}.jpg"
+                        path = f"{img_path.get('path').split('.')[0]}_{STYLES[style]}.jpg"
                         image = Image.open(path)
 
                         # display it

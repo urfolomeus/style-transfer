@@ -11,27 +11,27 @@ def run(model, image):
     output, _ = inference.inference(model, image)
     
     # write the resulting image to a file
-    name = f"/storage/{str(uuid.uuid4())}.jpg"
-    cv2.imwrite(name, output)
+    path = f"/storage/{str(uuid.uuid4())}.jpg"
+    cv2.imwrite(path, output)
 
-    return name
-
-
-def run_async(models, image, name: str):
-    asyncio.create_task(generate_remaining_models(models, image, name))
+    return path
 
 
-async def generate_remaining_models(models, image, name: str):
+def run_async(models, image, path: str):
+    asyncio.create_task(generate_remaining_models(models, image, path))
+
+
+async def generate_remaining_models(models, image, path: str):
     executor = ProcessPoolExecutor()
     event_loop = asyncio.get_event_loop()
     await event_loop.run_in_executor(
-        executor, partial(process_image, models, image, name)
+        executor, partial(process_image, models, image, path)
     )
 
 
-def process_image(models, image, name: str):
+def process_image(models, image, path: str):
     for model in models:
         output, _ = inference.inference(models[model], image)
-        name = name.split(".")[0]
-        name = f"{name.split('_')[0]}_{models[model]}.jpg"
-        cv2.imwrite(name, output)
+        path = path.split(".")[0]
+        path = f"{path.split('_')[0]}_{models[model]}.jpg"
+        cv2.imwrite(path, output)
