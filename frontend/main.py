@@ -53,7 +53,7 @@ if st.button("Style Transfer"):
                 if style not in displayed_styles:
                     try:
                         # get the image
-                        path = f"{img_path.get('path').split('.')[0]}_{STYLES[style]}.jpg"
+                        path = f"{img_path.get('path').split('_')[0]}_{STYLES[style]}.jpg"
                         image = Image.open(path)
 
                         # display it

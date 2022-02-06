@@ -1,17 +1,16 @@
 import asyncio
 import cv2
 import inference
-import uuid
 
 from concurrent.futures import ProcessPoolExecutor
 from functools import partial
 
 
-def run(model, image):
+def run(model, image, base_path):
     output, _ = inference.inference(model, image)
     
     # write the resulting image to a file
-    path = f"/storage/{str(uuid.uuid4())}.jpg"
+    path = f"{base_path}_{model}.jpg"
     cv2.imwrite(path, output)
 
     return path

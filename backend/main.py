@@ -1,6 +1,7 @@
 import config
 import model_runner
 import numpy as np
+import uuid
 import uvicorn
 
 from fastapi import File, FastAPI, UploadFile
@@ -17,12 +18,14 @@ def read_root():
 
 @app.post("/{style}")
 async def get_image(style: str, file: UploadFile = File(...)):
+    base_path = f"/storage/{str(uuid.uuid4())}"
+
     models = config.STYLES.copy()
 
     # call the model
     model = models[style]
     image = np.array(Image.open(file.file))
-    path = model_runner.run(model, image)
+    path = model_runner.run(model, image, base_path)
     
     # remove the style that we've done from the list and async do the rest
     del models[style]
